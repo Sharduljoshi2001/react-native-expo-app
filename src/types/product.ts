@@ -1,4 +1,4 @@
-//structure for siongle product that the API will fetch for us
+//structure for single product that the API will fetch for us
 export interface Product {
   id: number;
   title: string;
