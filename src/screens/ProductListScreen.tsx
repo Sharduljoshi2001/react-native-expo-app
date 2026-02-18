@@ -1,40 +1,39 @@
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    Image,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { fetchProducts } from "../services/api";
 import { Product } from "../types/product";
+
 export default function ProductListScreen() {
-  //state management
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // lifecycle method (whenever the coomponent loads)
   useEffect(() => {
     loadData();
   }, []);
 
-  //async fnction to fetch data
   const loadData = async () => {
     try {
       const data = await fetchProducts();
-      //"products array is inside our response
       if (data && data.products) {
         setProducts(data.products);
       }
     } catch (error) {
       console.error("Failed to load products", error);
     } finally {
-      setLoading(false); //wheter it fails or succeeds, close loading
+      setLoading(false);
     }
   };
 
-  //rendering single itm
   const renderProductItem = ({ item }: { item: Product }) => (
     <View style={styles.card}>
       <Image source={{ uri: item.thumbnail }} style={styles.image} />
@@ -48,7 +47,6 @@ export default function ProductListScreen() {
     </View>
   );
 
-  //loading state ui
   if (loading) {
     return (
       <View style={styles.center}>
@@ -58,7 +56,6 @@ export default function ProductListScreen() {
     );
   }
 
-  //main ui->it is a flatlist
   return (
     <View style={styles.container}>
       <FlatList
@@ -67,11 +64,19 @@ export default function ProductListScreen() {
         renderItem={renderProductItem}
         contentContainerStyle={styles.listContent}
       />
+
+      {/* floating action btn added */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => router.push("/create")}
+      >
+        <Text style={styles.fabText}>+</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
-//styling (CSS in JS)
+//styles update
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -84,6 +89,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 16,
+    paddingBottom: 80,
   },
   card: {
     backgroundColor: "white",
@@ -118,5 +124,28 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     color: "#666",
+  },
+  //new fab style
+  fab: {
+    position: "absolute",
+    bottom: 30,
+    right: 30,
+    backgroundColor: "#007AFF",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  fabText: {
+    color: "white",
+    fontSize: 30,
+    fontWeight: "bold",
+    marginTop: -4,
   },
 });

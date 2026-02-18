@@ -13,3 +13,16 @@ export interface ProductResponse {
   skip: number;
   limit: number;
 }
+//data to be send to server
+export interface CreatePostData {
+  title: string;
+  body: string;
+  userId: number;
+}
+//servers response
+export interface PostResponse {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+}
